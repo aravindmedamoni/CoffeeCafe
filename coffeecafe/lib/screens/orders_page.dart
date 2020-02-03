@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeecafe/components/banner_container.dart';
 import 'package:coffeecafe/components/rounded_rectangle_button.dart';
 import 'package:coffeecafe/models/coffee_data.dart';
+import 'package:coffeecafe/models/price_data.dart';
 import 'package:coffeecafe/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class _OrdersPageState extends State<OrdersPage> {
               onChanged: (currentCoffee) {
                 // print('Coffee Name $coffeeName');
                 setSelectedCoffee(currentCoffee);
-                getPrice();
+                coffeePrice = PriceData(selectedCoffee: selectedCoffee, selectedCupSize: selectedCupSize).getPrice();
               },
               selected: selectedCoffee == coffeeName,
               activeColor: Colors.deepOrange,
@@ -235,7 +236,7 @@ class _OrdersPageState extends State<OrdersPage> {
                         onChanged: (changedCupSize) {
                           setState(() {
                             selectedCupSize = changedCupSize;
-                            getPrice();
+                            coffeePrice =PriceData(selectedCoffee: selectedCoffee,selectedCupSize: selectedCupSize).getPrice();
                           });
                         },
                       ),
@@ -300,48 +301,6 @@ class _OrdersPageState extends State<OrdersPage> {
         ),
       ),
     );
-  }
-
-  // getting the coffee cost based on your selection
-  void getPrice() {
-    if (selectedCoffee == 'Capetuno' && selectedCupSize == 'Regular') {
-      setState(() {
-        coffeePrice = num.parse((110 * 1.1).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Capetuno' && selectedCupSize == 'Medium') {
-      setState(() {
-        coffeePrice = num.parse((110 * 2.5).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Capetuno' && selectedCupSize == 'Large') {
-      setState(() {
-        coffeePrice = num.parse((110 * 3.1).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Espresso' && selectedCupSize == 'Regular') {
-      setState(() {
-        coffeePrice = num.parse((75 * 1.1).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Espresso' && selectedCupSize == 'Medium') {
-      setState(() {
-        coffeePrice = num.parse((75 * 2.5).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Espresso' && selectedCupSize == 'Large') {
-      setState(() {
-        // value = ;
-        coffeePrice = num.parse((75 * 3.1).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Latte' && selectedCupSize == 'Regular') {
-      setState(() {
-        coffeePrice = num.parse((50 * 1.1).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Latte' && selectedCupSize == 'Medium') {
-      setState(() {
-        coffeePrice = num.parse((50 * 2.5).toStringAsFixed(2));
-      });
-    } else if (selectedCoffee == 'Latte' && selectedCupSize == 'Large') {
-      setState(() {
-        coffeePrice = num.parse((50 * 3.1).toStringAsFixed(2));
-      });
-    }
   }
 }
 
