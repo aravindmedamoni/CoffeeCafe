@@ -58,77 +58,122 @@ class OrdersStream extends StatelessWidget {
             final cupSize = order.data['cupSize'];
             final totalCost = order.data['totalPrice'];
             var time = order.data['time'];
-            orderDetailsCards.add(Container(
-              decoration: kContainerDecoration,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                coffeeName ?? '',
-                                style: kTextStyle.copyWith(fontSize: 18.0,
-                                  color: Colors.deepOrange,
-                                  fontWeight: FontWeight.bold
+            orderDetailsCards.add(GestureDetector(
+              onLongPress: (){
+                showDialogMessage(context,order.documentID);
+              },
+              child: Container(
+                decoration: kContainerDecoration,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  coffeeName ?? '',
+                                  style: kTextStyle.copyWith(
+                                      fontSize: 18.0,
+                                      color: Colors.deepOrange,
+                                      fontWeight: FontWeight.bold),
                                 ),
-
-                              ),
-                              SizedBox(
-                                height: 12.0,
-                              ),
-                              Text(
-                                cupSize ?? '',
+                                SizedBox(
+                                  height: 12.0,
+                                ),
+                                Text(
+                                  cupSize ?? '',
+                                  style:
+                                      kTextStyle.copyWith(color: Colors.blueGrey),
+                                ),
+                              ],
+                            ).paddingSymmetric(horizontal: 10.0),
+                          ),
+                        ),
+                        Expanded(
+                            child: Image.asset(
+                          'images/coffee.png',
+                          width: 80.0,
+                          height: 80.0,
+                        ))
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        RichText(
+                          text: TextSpan(children: <TextSpan>[
+                            TextSpan(
+                              text: '$totalCost' ?? '',
+                              style: kTextStyle.copyWith(
+                                  color: Colors.deepPurple,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0),
+                            ),
+                            TextSpan(
+                                text: ' INR',
                                 style: kTextStyle.copyWith(
-                                  color: Colors.blueGrey
-                                ),
-                              ),
-                            ],
-                          ).paddingSymmetric(horizontal: 10.0),
+                                    color: Colors.black87, fontSize: 14.0))
+                          ]),
                         ),
-                      ),
-                      Expanded(child: Image.asset('images/coffee.png', width: 80.0, height: 80.0,))
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: '$totalCost'??'', style: kTextStyle.copyWith(
-                                color: Colors.deepPurple,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18.0
-                            ),
-                            ),
-                            TextSpan(
-                              text: ' INR',style: kTextStyle.copyWith(
-                              color: Colors.black87,
-                              fontSize: 14.0
-                            )
-                            )
-                          ]
-                        ),
-                      ),
-                      Text(time.toString(), style: kTextStyle.copyWith(
-                        fontWeight: FontWeight.w500
-                      )),
-                    ],
-                  ).paddingSymmetric(horizontal: 10.0),
-                ],
-              ).paddingSymmetric(vertical: 14.0,horizontal: 12.0),
-            ).paddingSymmetric(vertical: 8.0));
+                        Text(time.toString(),
+                            style:
+                                kTextStyle.copyWith(fontWeight: FontWeight.w500)),
+                      ],
+                    ).paddingSymmetric(horizontal: 10.0),
+                  ],
+                ).paddingSymmetric(vertical: 14.0, horizontal: 12.0),
+              ).paddingSymmetric(vertical: 8.0),
+            ));
           }
           return ListView(
             children: orderDetailsCards,
-          ).paddingOnly(bottom: 65.0,left: 10.0,top: 10.0,right: 10.0);
+          ).paddingOnly(bottom: 65.0, left: 10.0, top: 10.0, right: 10.0);
         });
+  }
+
+  void showDialogMessage(BuildContext context,order){
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: Text('Delete Order'),
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        actions: <Widget>[
+          MaterialButton(
+            shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)) ,
+            color: Colors.purple[50],
+          child: Text('Delete',style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 17.0,
+            color: Colors.purple
+          ),
+          ),
+            splashColor: Colors.purple,
+      onPressed: (){
+            _firestore.collection('orders').document(order).delete().catchError((e)=>print(e.toString()));
+            Navigator.of(context).pop();
+      },
+      ),
+          SizedBox(
+            width: 6.0,
+          ),
+          MaterialButton(
+      shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+            color: Colors.white,
+            child: Text('Cancel'),
+
+            onPressed: (){
+              //_firestore.collection('orders').document(order.toString()).delete();
+              //Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    });
+        
   }
 }
