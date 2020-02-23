@@ -9,9 +9,11 @@ import 'package:coffeecafe/utils/extensions.dart';
 final _firestore = Firestore.instance;
 
 class OrdersDetailsPage extends StatelessWidget {
+  final globalKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: globalKey,
       appBar: AppBar(
         title: Text('Coffee Orders'),
         backgroundColor: Colors.deepOrange,
@@ -20,7 +22,7 @@ class OrdersDetailsPage extends StatelessWidget {
         color: Colors.grey[350],
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: OrdersStream(),
+        child: OrdersStream(globalKey: globalKey,),
       ),
       floatingActionButton: FancyFloatingActionButton(
           buttonName: 'Order Now',
@@ -34,10 +36,16 @@ class OrdersDetailsPage extends StatelessWidget {
 }
 
 class OrdersStream extends StatelessWidget {
-  const OrdersStream({
-    Key key,
-  }) : super(key: key);
 
+
+//   OrdersStream({
+//    Key key,
+//  }) : super(key: key);
+
+  OrdersStream({
+    this.globalKey
+});
+ final globalKey;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -155,7 +163,11 @@ class OrdersStream extends StatelessWidget {
             splashColor: Colors.purple,
       onPressed: (){
             _firestore.collection('orders').document(order).delete().catchError((e)=>print(e.toString()));
+
+            showSnackBar('order deleted successfully!');
+
             Navigator.of(context).pop();
+
       },
       ),
           SizedBox(
@@ -167,8 +179,7 @@ class OrdersStream extends StatelessWidget {
             child: Text('Cancel'),
 
             onPressed: (){
-              //_firestore.collection('orders').document(order.toString()).delete();
-              //Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -176,4 +187,15 @@ class OrdersStream extends StatelessWidget {
     });
         
   }
+
+  void showSnackBar(String message) {
+    final snackBar = SnackBar(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(topRight: Radius.circular(6.0),topLeft:Radius.circular(6.0)),
+      ),
+      content: Text(message),
+    );
+    globalKey.currentState.showSnackBar(snackBar);//showSnackBar(snackBar);
+  }
+
 }
